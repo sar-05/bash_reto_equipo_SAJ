@@ -1,9 +1,32 @@
 #!/usr/bin/env bash
 
-WORDLIST_PATH="./rockyou.txt"
 
 err() {
   echo "[$(date +'%Y-%m-%dT%H:%M:%S%z')]: $*" >&2
+is_wordlist_available(){
+  if [[ -f "/usr/share/wordlists/rockyou.txt" ]]; then
+    WORDLIST_PATH="/usr/share/wordlists/rockyou.txt"
+  elif [[ -f "./rockyou.txt" ]]; then
+    WORDLIST_PATH="./rockyou.txt"
+  else
+    return 1
+  fi
+}
+
+is_wget_installed(){
+  if ! command -v wget &>/dev/null; then
+    err "wget is not installed"
+    return 1
+  fi
+}
+
+get_wordlist(){
+  if is_wget_installed; then
+    echo "Getting rockyou.txt wordlist"
+    wget 'https://github.com/brannondorsey/naive-hashcat/releases/download/data/rockyou.txt' > /dev/null
+  else
+    err "Unable to get wordlist from github"
+  fi
 }
 
 is_john_installed(){
@@ -66,6 +89,15 @@ get_report(){
 done < <(get_unshadow_users)
 }
 
-is_john_installed 
-make_john_rip "$WORDLIST_PATH"
-get_report
+main(){
+  is_john_installed 
+
+  if ! is_wordlist_available; then
+    get_wordlist
+  fi
+
+  make_john_rip "$WORDLIST_PATH"
+  get_report
+}
+
+main
