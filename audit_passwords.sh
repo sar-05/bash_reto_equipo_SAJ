@@ -5,24 +5,24 @@ LOG_PATH=${LOG_PATH:='./audit_passwords.log'}
 LOG_LEVEL=${LOG_LEVEL:='DEBUG'}
 
 err() {
-  echo "[$(date '+%Y-%m-%d %H:%M:%S %z')]: $*" | tee -a "$LOG_PATH" >&2
+  echo "[$(date '+%Y-%m-%d %H:%M:%S %z')]: $*" | tee --append "$LOG_PATH" >&2
 }
 
 warn() {
   if [[ "$LOG_LEVEL" =~ DEBUG|INFO|WARN ]]; then
-    echo "[$(date +'+%Y-%m-%d %H:%M:%S %z')]: $*" | tee -a "$LOG_PATH" >&2
+    echo "[$(date +'+%Y-%m-%d %H:%M:%S %z')]: $*" | tee --append "$LOG_PATH" >&2
   fi
 }
 
 inf() {
   if [[ "$LOG_LEVEL" =~ DEBUG|INFO ]]; then
-    echo "[$(date +'+%Y-%m-%d %H:%M:%S %z')]: $*" | tee -a "$LOG_PATH" >&2
+    echo "[$(date +'+%Y-%m-%d %H:%M:%S %z')]: $*" | tee --append "$LOG_PATH" >&2
   fi
 }
 
 debug() {
   if [[ "$LOG_LEVEL" == 'DEBUG' ]]; then
-    echo "[$(date +'+%Y-%m-%d %H:%M:%S %z')]: $*" | tee -a "$LOG_PATH" >&2
+    echo "[$(date +'+%Y-%m-%d %H:%M:%S %z')]: $*" | tee --append "$LOG_PATH" >&2
   fi
 }
 
@@ -126,9 +126,9 @@ get_report(){
   echo "PASSWORD     |  " | tee "$REPORT_PATH"
   while IFS= read -r user; do
     if grep --quiet "$user" <(get_rip_users); then
-      printf "%10s    | Weak\n" "$user" | tee "$REPORT_PATH"
+      printf "%10s    | Weak\n" "$user" | tee --append "$REPORT_PATH"
     else
-      printf "%10s    | Strong\n" "$user" | tee "$REPORT_PATH"
+      printf "%10s    | Strong\n" "$user" | tee --append "$REPORT_PATH"
     fi
 done < <(get_unshadow_users)
 }
