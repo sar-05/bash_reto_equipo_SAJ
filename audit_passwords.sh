@@ -106,11 +106,12 @@ get_rip_users(){
 }
 
 get_report(){
+  echo "PASSWORD     |  "
   while IFS= read -r user; do
     if grep --quiet "$user" <(get_rip_users); then
-      echo "$user has been riped"
+      printf "%10s    | Weak" "$user" >> "$REPROT_PATH"
     else
-      echo "$user hasn't been riped"
+      printf "%10s    | Strong" "$user" >> "$REPROT_PATH"
     fi
 done < <(get_unshadow_users)
 }
