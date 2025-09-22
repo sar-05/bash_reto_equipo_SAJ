@@ -109,9 +109,9 @@ get_report(){
   echo "PASSWORD     |  " | tee "$REPROT_PATH"
   while IFS= read -r user; do
     if grep --quiet "$user" <(get_rip_users); then
-      printf "%10s    | Weak" "$user" | tee "$REPROT_PATH"
+      printf "%10s    | Weak\n" "$user" | tee "$REPROT_PATH"
     else
-      printf "%10s    | Strong" "$user" | tee "$REPROT_PATH"
+      printf "%10s    | Strong\n" "$user" | tee "$REPROT_PATH"
     fi
 done < <(get_unshadow_users)
 }
