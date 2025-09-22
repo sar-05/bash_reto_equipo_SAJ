@@ -49,7 +49,7 @@ is_wget_installed(){
 get_wordlist(){
   if is_wget_installed; then
     echo "Getting rockyou.txt wordlist"
-    wget 'https://github.com/brannondorsey/naive-hashcat/releases/download/data/rockyou.txt' > /dev/null
+    wget --quiet 'https://github.com/brannondorsey/naive-hashcat/releases/download/data/rockyou.txt'
   else
     err "Unable to get wordlist from github"
   fi
@@ -106,12 +106,12 @@ get_rip_users(){
 }
 
 get_report(){
-  echo "PASSWORD     |  "
+  echo "PASSWORD     |  " | tee "$REPROT_PATH"
   while IFS= read -r user; do
     if grep --quiet "$user" <(get_rip_users); then
-      printf "%10s    | Weak" "$user" >> "$REPROT_PATH"
+      printf "%10s    | Weak" "$user" | tee "$REPROT_PATH"
     else
-      printf "%10s    | Strong" "$user" >> "$REPROT_PATH"
+      printf "%10s    | Strong" "$user" | tee "$REPROT_PATH"
     fi
 done < <(get_unshadow_users)
 }
