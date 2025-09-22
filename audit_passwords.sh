@@ -1,14 +1,40 @@
 #!/usr/bin/env bash
 
+REPROT_PATH="./passwords_report"
+LOG_PATH="./audit_passwords.log"
+LOG_LEVEL="DEBUG"
 
 err() {
-  echo "[$(date +'%Y-%m-%dT%H:%M:%S%z')]: $*" >&2
+  echo "[$(date '+%Y-%m-%d %H:%M:%S %z')]: $*" | tee -a "$LOG_PATH" >&2
+}
+
+warn() {
+  if [[ "$LOG_LEVEL" =~ DEBUG|INFO|WARN ]]; then
+    echo "[$(date +'+%Y-%m-%d %H:%M:%S %z')]: $*" | tee -a "$LOG_PATH" >&2
+  fi
+}
+
+info() {
+  if [[ "$LOG_LEVEL" =~ DEBUG|INFO ]]; then
+    echo "[$(date +'+%Y-%m-%d %H:%M:%S %z')]: $*" | tee -a "$LOG_PATH" >&2
+  fi
+}
+
+debug() {
+  if [[ "$LOG_LEVEL" == 'DEBUG' ]]; then
+    echo "[$(date +'+%Y-%m-%d %H:%M:%S %z')]: $*" | tee -a "$LOG_PATH" >&2
+  fi
+}
+
 is_wordlist_available(){
   if [[ -f "/usr/share/wordlists/rockyou.txt" ]]; then
+    info "Wordlist found in default path"
     WORDLIST_PATH="/usr/share/wordlists/rockyou.txt"
   elif [[ -f "./rockyou.txt" ]]; then
+    info "Wordlist found in script directory"
     WORDLIST_PATH="./rockyou.txt"
   else
+    warn "Unable to find wordlist"
     return 1
   fi
 }
